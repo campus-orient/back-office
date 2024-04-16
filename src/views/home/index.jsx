@@ -1,5 +1,4 @@
-import * as React from "react";
-import { styled } from "@mui/material/styles";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
@@ -9,15 +8,21 @@ import InterestsIcon from "@mui/icons-material/Interests";
 import UserListComponent from "../../components/table/users";
 import { users } from "../../mock/users";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
+import ManageUserDialog from "../../components/dialog/users/manage";
 
-export default function HomeView() {
+const HomeView = () => {
+  const [userDialog, setUserDialog] = useState({
+    open: false,
+    mode: "",
+  });
+
   const cardList = [
     {
       title: "Users",
       icon: <GroupsIcon />,
       data: <UserListComponent users={users} />,
       count: users.length,
-      canAdd: true,
+      dialog: true,
     },
     {
       title: "Points of Interests",
@@ -28,6 +33,14 @@ export default function HomeView() {
       title: "Frequently Visited",
     },
   ];
+
+  const handleUserDialog = (openState, modeState) => {
+    setUserDialog({ ...userDialog, open: openState, mode: modeState });
+  };
+
+  useEffect(() => {
+    console.log("State", userDialog);
+  }, [userDialog]);
 
   return (
     <Container>
@@ -53,7 +66,7 @@ export default function HomeView() {
                 alignItems: "center",
               }}
             >
-              {item.canAdd && (
+              {item.dialog && (
                 <Card
                   sx={{
                     width: 25,
@@ -72,6 +85,7 @@ export default function HomeView() {
                     edge="end"
                     aria-label="delete"
                     sx={{ m: 0, p: 0 }}
+                    onClick={() => handleUserDialog(true, "create")}
                   >
                     <ControlPointIcon sx={{ color: "green" }} />
                   </IconButton>
@@ -83,6 +97,16 @@ export default function HomeView() {
           </Grid>
         ))}
       </Grid>
+
+      {userDialog.open && (
+        <ManageUserDialog
+          open={userDialog.open}
+          mode={userDialog.mode}
+          handleClose={() => handleUserDialog(false, "")}
+        />
+      )}
     </Container>
   );
-}
+};
+
+export default HomeView;
