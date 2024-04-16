@@ -1,13 +1,15 @@
-import { useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 import RouteStack from "./router";
+import AuthProvider from "./context/auth";
 
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <RouteStack />
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <RouteStack />
+        </BrowserRouter>
+      </AuthProvider>
     </>
   );
 }
