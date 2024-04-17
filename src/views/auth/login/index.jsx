@@ -86,7 +86,7 @@ const LoginView = () => {
         });
       }
 
-      // localStorage.setItem("token", response.token);
+      localStorage.setItem("token", response.token);
       headers();
 
       setLogged(() => true);
