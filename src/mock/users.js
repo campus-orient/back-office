@@ -14,4 +14,4 @@ export const users = [
   },
 ];
 
-export const userTypes = ["student", "security", "lecturer"];
+export const userTypes = ["student", "lecturer"];
