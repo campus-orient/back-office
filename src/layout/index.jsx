@@ -21,7 +21,7 @@ const AppLayout = () => {
         setLogged(() => false);
         navigate("auth/login");
       } else {
-        //
+        setLogged(() => true);
       }
     };
 
