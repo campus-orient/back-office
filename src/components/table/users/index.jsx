@@ -10,43 +10,47 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import PropTypes from "prop-types";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
-import { Card, Divider, Stack } from "@mui/material";
+import { Card, Divider, Stack, Typography } from "@mui/material";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 
 const UserListComponent = ({ users }) => {
   return (
     <Box>
       <Grid sx={{ width: "100%" }}>
-        <List dense={true}>
-          {users.map((item) => (
-            <ListItem
-              sx={{ display: "flex", p: 0 }}
-              key={item.id}
-              secondaryAction={
-                <Stack
-                  direction="row"
-                  spacing={1}
-                  divider={<Divider orientation="vertical" flexItem />}
-                >
-                  <IconButton aria-label="delete">
-                    <AssignmentIndIcon sx={{ width: 20 }} />
-                  </IconButton>
+        {users && users.length > 0 ? (
+          <List dense={true}>
+            {users.map((item) => (
+              <ListItem
+                sx={{ display: "flex", p: 0 }}
+                key={item.id}
+                secondaryAction={
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    divider={<Divider orientation="vertical" flexItem />}
+                  >
+                    <IconButton aria-label="delete">
+                      <AssignmentIndIcon sx={{ width: 20 }} />
+                    </IconButton>
 
-                  <IconButton aria-label="delete">
-                    <DeleteIcon sx={{ width: 20, color: "red" }} />
-                  </IconButton>
-                </Stack>
-              }
-            >
-              <AccountCircleIcon sx={{ mx: 1 }} />
+                    <IconButton aria-label="delete">
+                      <DeleteIcon sx={{ width: 20, color: "red" }} />
+                    </IconButton>
+                  </Stack>
+                }
+              >
+                <AccountCircleIcon sx={{ mx: 1 }} />
 
-              <ListItemText
-                primary={`${item.name} ${item.surname}`}
-                secondary={item.email}
-              />
-            </ListItem>
-          ))}
-        </List>
+                <ListItemText
+                  primary={`${item.name} ${item.surname}`}
+                  secondary={item.email}
+                />
+              </ListItem>
+            ))}
+          </List>
+        ) : (
+          <Typography>No Users found</Typography>
+        )}
       </Grid>
     </Box>
   );
