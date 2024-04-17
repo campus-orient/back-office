@@ -16,8 +16,15 @@ import validatePassword from "../../../utils/helpers/exception/verify-password";
 import { login } from "../../../services/http/auth";
 import SnackbarComponent from "../../../components/feedback/snackbar";
 import { failedRequest } from "../../../utils/helpers/exception/http/failedRequest";
+import { headers } from "../../../constants/axios/config";
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../../../context/declarations";
 
 const LoginView = () => {
+  const { setLogged } = useAuthContext();
+
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState({
     value: "",
     isError: false,
@@ -61,7 +68,6 @@ const LoginView = () => {
     if (!validateEmail(email.value) && !validatePassword(password.value)) {
       setForm({ ...form, isSubmitting: true });
 
-      console.log("isSubmitting", form.isSubmitting);
       const response = await login({
         email: email.value,
         password: password.value,
@@ -71,14 +77,21 @@ const LoginView = () => {
 
       setPassword({ ...password, value: "" });
 
-      setSnackbar({
-        ...snackbar,
-        open: true,
-        message: failedRequest(response).message,
-        severity: "error",
-      });
+      if (!response.token) {
+        return setSnackbar({
+          ...snackbar,
+          open: true,
+          message: failedRequest(response).message,
+          severity: "error",
+        });
+      }
 
-      console.log("Login response", response);
+      // localStorage.setItem("token", response.token);
+      headers();
+
+      setLogged(() => true);
+
+      navigate("/");
     }
   };
 
@@ -98,9 +111,11 @@ const LoginView = () => {
   return (
     <Container
       sx={{
-        height: "100%",
         display: "flex",
         alignItems: "center",
+        flex: 1,
+        width: "100%",
+        height: "100vh",
         justifyContent: "center",
       }}
     >
