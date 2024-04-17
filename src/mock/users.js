@@ -13,3 +13,5 @@ export const users = [
     email: "ntsako.khoza@mail.com",
   },
 ];
+
+export const userTypes = ["student", "security", "lecturer"];
