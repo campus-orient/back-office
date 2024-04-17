@@ -38,12 +38,16 @@ const AppLayout = () => {
       }}
     >
       {authCheck ? (
-        <>
+        <Box
+          sx={{
+            width: "100%",
+          }}
+        >
           {logged && <AppBarComponent />}
           <Container sx={{ mt: logged ? 10 : 0 }}>
             <Outlet />
           </Container>
-        </>
+        </Box>
       ) : (
         <FullScreenLoaderComponent />
       )}
