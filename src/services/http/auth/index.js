@@ -10,3 +10,16 @@ export const verifyToken = async () => {
     return error;
   }
 };
+
+export const login = async (credentials) => {
+  try {
+    const response = await axios.post(`${API_URL}/api/v1/login`, {
+      email: credentials.email,
+      password: credentials.password,
+    });
+
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
