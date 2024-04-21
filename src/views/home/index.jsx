@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { Card, Container, IconButton, Typography } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import InterestsIcon from "@mui/icons-material/Interests";
-import UserListComponent from "../../components/table/users";
-import { users } from "../../mock/users";
-import ControlPointIcon from "@mui/icons-material/ControlPoint";
-import ManageUserDialog from "../../components/dialog/users/manage";
+import { useUsersContext } from "../../context/declarations";
+import CardHeaderComponent from "./card/header";
+import UsersSection from "./sections/users";
+import InterestsPlacesSection from "./sections/interests-places";
+import FrequentlyVisitedSection from "./sections/frequently-visited";
+import ManageUserDialog from "./sections/users/dialog";
 
 const HomeView = () => {
+  const { userQuery, usersQuery, newUserMutation } = useUsersContext();
+
   const [userDialog, setUserDialog] = useState({
     open: false,
     mode: "",
@@ -18,82 +20,77 @@ const HomeView = () => {
 
   const cardList = [
     {
+      id: 1,
       title: "Users",
+      addDialog: true,
       icon: <GroupsIcon />,
-      data: <UserListComponent users={users} />,
-      count: users.length,
-      dialog: true,
+      section: <UsersSection users={usersQuery?.data?.users || []} />,
     },
     {
+      id: 2,
       title: "Points of Interests",
       icon: <InterestsIcon />,
-      canAdd: true,
+      addDialog: true,
+      section: <InterestsPlacesSection />,
     },
     {
+      id: 3,
       title: "Frequently Visited",
+      section: <FrequentlyVisitedSection />,
     },
   ];
 
-  const handleUserDialog = (openState, modeState) => {
-    setUserDialog({ ...userDialog, open: openState, mode: modeState });
+  const handleDialog = (id, openState, modeState) => {
+    if (id == 1) {
+      //set user dialog
+      setUserDialog({ ...userDialog, open: openState, mode: modeState });
+    }
+
+    if (id == 2) {
+      //set interests place dialog
+    }
+    console.log(
+      "Handle dialog called",
+      "id",
+      id,
+      "open",
+      openState,
+      "mode",
+      modeState
+    );
   };
+
+  useEffect(() => {
+    console.log("Token", localStorage.getItem("token"));
+  }, []);
 
   useEffect(() => {
     console.log("State", userDialog);
   }, [userDialog]);
+
+  useEffect(() => {
+    console.log("User query", userQuery.data, "Users query", usersQuery.data);
+  }, [userQuery, usersQuery]);
+
+  const handleCreateUser = async (profile) => {
+    console.log("Profile in handle func", profile);
+    const response = await newUserMutation.mutateAsync(profile);
+
+    if (response.message) return handleDialog(1, false, "create");
+    console.log("Response", response);
+  };
 
   return (
     <Container>
       <Grid container spacing={2} sx={{}}>
         {cardList.map((item) => (
           <Grid key={item.title} item xs={12} md={4}>
-            <Card
-              elevation={5}
-              sx={{ flex: 1, display: "flex", p: 1, justifyContent: "center" }}
-            >
-              {item.icon}
-              <Typography sx={{ fontWeight: "500", px: 1 }}>
-                {item.title}
-              </Typography>
+            <CardHeaderComponent
+              item={item}
+              toggleDialog={(id, open, mode) => handleDialog(id, open, mode)}
+            />
 
-              <Typography sx={{ fontWeight: "500" }}>{item.count}</Typography>
-            </Card>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              {item.dialog && (
-                <Card
-                  sx={{
-                    width: 25,
-                    height: 25,
-                    color: "red",
-                    mt: -1,
-                    bgcolor: "white",
-                    borderRadius: 1000,
-                    display: "flex",
-                    p: 0.6,
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    sx={{ m: 0, p: 0 }}
-                    onClick={() => handleUserDialog(true, "create")}
-                  >
-                    <ControlPointIcon sx={{ color: "green" }} />
-                  </IconButton>
-                </Card>
-              )}
-            </Box>
-
-            {item.data}
+            {item.section}
           </Grid>
         ))}
       </Grid>
@@ -102,7 +99,8 @@ const HomeView = () => {
         <ManageUserDialog
           open={userDialog.open}
           mode={userDialog.mode}
-          handleClose={() => handleUserDialog(false, "")}
+          handleClose={(id, open, mode) => handleDialog(id, open, mode)}
+          handleCreate={(profile) => handleCreateUser(profile)}
         />
       )}
     </Container>
