@@ -1,6 +1,6 @@
 const validatePassword = (password, intention) => {
   // Check if the password is empty
-  if (!password.trim()) {
+  if (!password?.trim()) {
     return "Password is required.";
   }
 
