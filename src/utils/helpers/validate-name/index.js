@@ -1,6 +1,6 @@
 export const validateName = (name, alias) => {
   // Check if the name is empty
-  if (!name.trim()) return `${alias?.toUpperCase()} is required."`;
+  if (!name?.trim()) return `${alias?.toUpperCase()} is required."`;
 
   // Check if the name contains only alphabetic characters and spaces
   if (!/^[A-Za-z\s]+$/.test(name))
