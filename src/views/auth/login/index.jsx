@@ -11,8 +11,8 @@ import {
 import React, { useEffect, useState } from "react";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import LockPersonIcon from "@mui/icons-material/LockPerson";
-import validateEmail from "../../../utils/helpers/exception/verify-email";
-import validatePassword from "../../../utils/helpers/exception/verify-password";
+import validateEmail from "../../../utils/helpers/validate-email";
+import validatePassword from "../../../utils/helpers/validate-password";
 import { login } from "../../../services/http/auth";
 import SnackbarComponent from "../../../components/feedback/snackbar";
 import { failedRequest } from "../../../utils/helpers/exception/http/failedRequest";
@@ -86,14 +86,20 @@ const LoginView = () => {
         });
       }
 
-      localStorage.setItem("token", response.token);
+      const token = response.token;
+      localStorage.setItem("token", token);
+
       headers();
 
       setLogged(() => true);
 
-      navigate("/");
+      if (localStorage.getItem("token")) {
+        navigate("/");
+      }
     }
   };
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (!validateEmail(email.value) && !validatePassword(password.value))
