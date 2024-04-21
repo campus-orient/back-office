@@ -1,6 +1,6 @@
 const validateEmail = (email) => {
   // Check if the email is empty
-  if (!email.trim()) {
+  if (!email?.trim()) {
     return "Email address is required.";
   }
 
