@@ -15,13 +15,16 @@ const AppLayout = () => {
     const verifyTokenFn = async () => {
       const response = await verifyToken();
 
+      console.log("token response", response);
+
       setAuthCheck(() => true);
 
-      if (response.response) {
+      if (response) {
         setLogged(() => false);
         navigate("auth/login");
       } else {
         setLogged(() => true);
+        navigate("/");
       }
     };
 
