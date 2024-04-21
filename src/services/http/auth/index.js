@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "../../../constants/axios/config";
+import { API_URL, headers } from "../../../constants/axios/config";
 
 export const verifyToken = async () => {
   try {
@@ -17,6 +17,17 @@ export const login = async (credentials) => {
       email: credentials.email,
       password: credentials.password,
     });
+
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const fetchLoggedUser = async () => {
+  headers();
+  try {
+    const response = await axios.get(`${API_URL}/api/user`);
 
     return response.data;
   } catch (error) {
