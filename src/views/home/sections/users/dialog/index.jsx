@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -55,6 +55,30 @@ const ManageUserDialog = ({
     isSubmitting: false,
   });
 
+  useEffect(() => {
+    if (mode == "update") {
+      setName((name) => ({
+        ...name,
+        value: user.name,
+      }));
+
+      setSurname((surname) => ({
+        ...surname,
+        value: user.surname,
+      }));
+
+      setEmail((email) => ({
+        ...email,
+        value: user.email,
+      }));
+
+      setType((type) => ({
+        ...type,
+        value: user.type,
+      }));
+    }
+  }, []);
+
   return (
     <React.Fragment>
       <Dialog
@@ -78,7 +102,11 @@ const ManageUserDialog = ({
           }}
         >
           <AccountCircle sx={{ mr: 1 }} />
-          <DialogTitle sx={{ p: 0 }}>Create new user</DialogTitle>
+          <DialogTitle sx={{ p: 0 }}>
+            {mode == "update"
+              ? `${user.name} ${user.surname}`
+              : "Create new user"}{" "}
+          </DialogTitle>
         </Card>
 
         <Grid container spacing={2} sx={{ p: 1, my: 0.1, width: 600 }}>
@@ -131,6 +159,7 @@ const ManageUserDialog = ({
               fullWidth
               id="outlined-error-helper-text"
               label="Email"
+              disabled={mode == "update"}
               error={
                 form.submitted
                   ? validateEmail(email.value)
@@ -213,6 +242,7 @@ const ManageUserDialog = ({
 ManageUserDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   mode: PropTypes.string,
+  user: PropTypes.object,
   handleClose: PropTypes.func,
   handleCreate: PropTypes.func,
 };
