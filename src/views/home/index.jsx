@@ -9,13 +9,23 @@ import UsersSection from "./sections/users";
 import InterestsPlacesSection from "./sections/interests-places";
 import FrequentlyVisitedSection from "./sections/frequently-visited";
 import ManageUserDialog from "./sections/users/dialog";
+import FullScreenLoaderComponent from "../../components/loader/full-screen";
+import SnackbarComponent from "../../components/feedback/snackbar";
+import { failedRequest } from "../../utils/helpers/exception/http/failedRequest";
 
 const HomeView = () => {
   const { userQuery, usersQuery, newUserMutation } = useUsersContext();
 
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "",
+  });
+
   const [userDialog, setUserDialog] = useState({
     open: false,
     mode: "",
+    user: null,
   });
 
   const cardList = [
@@ -24,26 +34,37 @@ const HomeView = () => {
       title: "Users",
       addDialog: true,
       icon: <GroupsIcon />,
-      section: <UsersSection users={usersQuery?.data?.users || []} />,
+      section: (
+        <UsersSection
+          users={usersQuery?.data?.users || []}
+          viewUser={(user) => handleDialog(1, true, "update", user)}
+        />
+      ),
     },
     {
       id: 2,
       title: "Points of Interests",
       icon: <InterestsIcon />,
-      addDialog: true,
+      addDialog: false,
       section: <InterestsPlacesSection />,
     },
     {
       id: 3,
       title: "Frequently Visited",
+      addDialog: false,
       section: <FrequentlyVisitedSection />,
     },
   ];
 
-  const handleDialog = (id, openState, modeState) => {
+  const handleDialog = (id, openState, modeState, user) => {
     if (id == 1) {
       //set user dialog
-      setUserDialog({ ...userDialog, open: openState, mode: modeState });
+      setUserDialog({
+        ...userDialog,
+        open: openState,
+        mode: modeState,
+        user: user,
+      });
     }
 
     if (id == 2) {
@@ -77,7 +98,16 @@ const HomeView = () => {
     const response = await newUserMutation.mutateAsync(profile);
     console.log("Response", response);
 
-    if (response.message) return handleDialog(1, false, "create");
+    setSnackbar({
+      ...snackbar,
+      open: true,
+      message: response.response
+        ? failedRequest(response).message
+        : response.message,
+      severity: response.response ? "error" : "success",
+    });
+
+    if (response.message) return handleDialog(1, false, "create", {});
   };
 
   return (
@@ -87,7 +117,9 @@ const HomeView = () => {
           <Grid key={item.title} item xs={12} md={4}>
             <CardHeaderComponent
               item={item}
-              toggleDialog={(id, open, mode) => handleDialog(id, open, mode)}
+              toggleDialog={(id, open, mode) =>
+                handleDialog(id, open, mode, {})
+              }
             />
 
             {item.section}
@@ -99,10 +131,27 @@ const HomeView = () => {
         <ManageUserDialog
           open={userDialog.open}
           mode={userDialog.mode}
-          handleClose={(id, open, mode) => handleDialog(id, open, mode)}
+          handleClose={(id, open, mode) => handleDialog(id, open, mode, {})}
           handleCreate={(profile) => handleCreateUser(profile)}
+          user={userDialog.user}
         />
       )}
+
+      {(userQuery.isLoading ||
+        usersQuery.isLoading ||
+        newUserMutation.isLoading) && <FullScreenLoaderComponent />}
+
+      <SnackbarComponent
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleVisibility={(state) => {
+          setSnackbar({
+            ...snackbar,
+            open: state,
+          });
+        }}
+      />
     </Container>
   );
 };
