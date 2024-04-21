@@ -75,9 +75,9 @@ const HomeView = () => {
   const handleCreateUser = async (profile) => {
     console.log("Profile in handle func", profile);
     const response = await newUserMutation.mutateAsync(profile);
+    console.log("Response", response);
 
     if (response.message) return handleDialog(1, false, "create");
-    console.log("Response", response);
   };
 
   return (
