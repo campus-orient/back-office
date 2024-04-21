@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Divider,
@@ -14,7 +14,7 @@ import PropTypes from "prop-types";
 import Delete from "@mui/icons-material/Delete";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 
-const UsersSection = ({ users }) => {
+const UsersSection = ({ users, viewUser }) => {
   return (
     <Grid>
       {users && users.length > 0 ? (
@@ -36,7 +36,11 @@ const UsersSection = ({ users }) => {
                   </Stack>
                 }
               >
-                <IconButton aria-label="profile" sx={{ p: 0, mr: 1 }}>
+                <IconButton
+                  aria-label="profile"
+                  sx={{ p: 0, mr: 1 }}
+                  onClick={() => viewUser(item)}
+                >
                   <AccountCircle color="primary" />
                 </IconButton>
 
@@ -62,6 +66,7 @@ const UsersSection = ({ users }) => {
 
 UsersSection.propTypes = {
   users: PropTypes.array,
+  viewUser: PropTypes.func,
 };
 
 export default UsersSection;
