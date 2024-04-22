@@ -3,7 +3,11 @@ import PropTypes from "prop-types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { UsersContext, useAuthContext } from "../../../declarations";
 import { fetchLoggedUser } from "../../../../services/http/auth";
-import { createUser, fetchUsers } from "../../../../services/http/users";
+import {
+  createUser,
+  fetchUsers,
+  updateUser,
+} from "../../../../services/http/users";
 
 const UsersProvider = ({ children }) => {
   const queryClient = useQueryClient();
@@ -30,12 +34,21 @@ const UsersProvider = ({ children }) => {
     },
   });
 
+  const updateUserMutation = useMutation({
+    mutationFn: updateUser,
+    onSuccess: (data) => {
+      console.log("success data", data);
+      if (data.message) queryClient.invalidateQueries(["users"]);
+    },
+  });
+
   // Create the auth context value
   const usersContextValue = {
     //
     userQuery,
     usersQuery,
     newUserMutation,
+    updateUserMutation,
   };
 
   return (
