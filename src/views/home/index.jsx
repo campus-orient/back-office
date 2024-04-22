@@ -14,7 +14,8 @@ import SnackbarComponent from "../../components/feedback/snackbar";
 import { failedRequest } from "../../utils/helpers/exception/http/failedRequest";
 
 const HomeView = () => {
-  const { userQuery, usersQuery, newUserMutation } = useUsersContext();
+  const { userQuery, usersQuery, newUserMutation, updateUserMutation } =
+    useUsersContext();
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -93,9 +94,13 @@ const HomeView = () => {
     console.log("User query", userQuery.data, "Users query", usersQuery.data);
   }, [userQuery, usersQuery]);
 
-  const handleCreateUser = async (profile) => {
-    console.log("Profile in handle func", profile);
-    const response = await newUserMutation.mutateAsync(profile);
+  const handleSubmitUser = async (profile) => {
+    console.log("Handle submit user mode", userDialog.mode);
+    const response =
+      userDialog.mode == "create"
+        ? await newUserMutation.mutateAsync(profile)
+        : await updateUserMutation.mutateAsync(profile);
+
     console.log("Response", response);
 
     setSnackbar({
@@ -107,7 +112,7 @@ const HomeView = () => {
       severity: response.response ? "error" : "success",
     });
 
-    if (response.message) return handleDialog(1, false, "create", {});
+    return handleDialog(1, false, userDialog.mode, {});
   };
 
   return (
@@ -132,7 +137,7 @@ const HomeView = () => {
           open={userDialog.open}
           mode={userDialog.mode}
           handleClose={(id, open, mode) => handleDialog(id, open, mode, {})}
-          handleCreate={(profile) => handleCreateUser(profile)}
+          handleSubmit={(profile) => handleSubmitUser(profile)}
           user={userDialog.user}
         />
       )}
