@@ -13,7 +13,6 @@ export const fetchUsers = async () => {
 };
 
 export const createUser = async (profile) => {
-  console.log("Profile", profile);
   try {
     const response = await axios.post(`${API_URL}/api/v1/users`, {
       name: profile.name,
@@ -23,6 +22,27 @@ export const createUser = async (profile) => {
       password: "password",
       password_confirmation: "password",
     });
+
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export const updateUser = async (profile) => {
+  try {
+    console.log("Profile id", profile);
+    const response = await axios.patch(
+      `${API_URL}/api/v1/users/${profile.id}`,
+      {
+        name: profile.name,
+        surname: profile.surname,
+        // email: profile.email,
+        type: profile.type,
+        password: "password",
+        password_confirmation: "password",
+      }
+    );
 
     return response.data;
   } catch (error) {
