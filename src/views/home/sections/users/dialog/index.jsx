@@ -15,14 +15,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ManageUserDialog = ({
-  open,
-  mode,
-  user,
-  handleClose,
-  handleCreate,
-  handleUpdate,
-}) => {
+const ManageUserDialog = ({ open, mode, user, handleClose, handleSubmit }) => {
   const theme = useTheme();
 
   const [name, setName] = useState({
@@ -223,7 +216,8 @@ const ManageUserDialog = ({
             }
             sx={{}}
             onClick={() =>
-              handleCreate({
+              handleSubmit({
+                id: user?.id,
                 name: name.value,
                 surname: surname.value,
                 email: email.value,
@@ -244,7 +238,7 @@ ManageUserDialog.propTypes = {
   mode: PropTypes.string,
   user: PropTypes.object,
   handleClose: PropTypes.func,
-  handleCreate: PropTypes.func,
+  handleSubmit: PropTypes.func,
 };
 
 export default ManageUserDialog;
