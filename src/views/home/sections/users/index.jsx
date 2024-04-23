@@ -14,7 +14,14 @@ import PropTypes from "prop-types";
 import Delete from "@mui/icons-material/Delete";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 
-const UsersSection = ({ users, viewUser }) => {
+const UsersSection = ({ users, viewUser, handleDelete }) => {
+  const handleDeleteClick = (item) => {
+    if (
+      confirm(`Are you sure you want to delete ${item?.name} ${item.surname}?`)
+    )
+      return handleDelete(item.id);
+  };
+
   return (
     <Grid>
       {users && users.length > 0 ? (
@@ -30,7 +37,11 @@ const UsersSection = ({ users, viewUser }) => {
                     spacing={1}
                     divider={<Divider orientation="vertical" flexItem />}
                   >
-                    <IconButton aria-label="delete" sx={{ p: 0 }}>
+                    <IconButton
+                      aria-label="delete"
+                      sx={{ p: 0 }}
+                      onClick={() => handleDeleteClick(item)}
+                    >
                       <Delete sx={{ width: 15, height: 15, color: "red" }} />
                     </IconButton>
                   </Stack>
@@ -67,6 +78,7 @@ const UsersSection = ({ users, viewUser }) => {
 UsersSection.propTypes = {
   users: PropTypes.array,
   viewUser: PropTypes.func,
+  handleDelete: PropTypes.func,
 };
 
 export default UsersSection;
