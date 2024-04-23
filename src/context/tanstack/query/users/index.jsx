@@ -5,6 +5,7 @@ import { UsersContext, useAuthContext } from "../../../declarations";
 import { fetchLoggedUser } from "../../../../services/http/auth";
 import {
   createUser,
+  deleteUser,
   fetchUsers,
   updateUser,
 } from "../../../../services/http/users";
@@ -42,6 +43,14 @@ const UsersProvider = ({ children }) => {
     },
   });
 
+  const deleteUserMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: (data) => {
+      console.log("success data", data);
+      if (data.message) queryClient.invalidateQueries(["users"]);
+    },
+  });
+
   // Create the auth context value
   const usersContextValue = {
     //
@@ -49,6 +58,7 @@ const UsersProvider = ({ children }) => {
     usersQuery,
     newUserMutation,
     updateUserMutation,
+    deleteUserMutation,
   };
 
   return (
