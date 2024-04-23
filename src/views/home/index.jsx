@@ -14,8 +14,13 @@ import SnackbarComponent from "../../components/feedback/snackbar";
 import { failedRequest } from "../../utils/helpers/exception/http/failedRequest";
 
 const HomeView = () => {
-  const { userQuery, usersQuery, newUserMutation, updateUserMutation } =
-    useUsersContext();
+  const {
+    userQuery,
+    usersQuery,
+    newUserMutation,
+    updateUserMutation,
+    deleteUserMutation,
+  } = useUsersContext();
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -39,6 +44,7 @@ const HomeView = () => {
         <UsersSection
           users={usersQuery?.data?.users || []}
           viewUser={(user) => handleDialog(1, true, "update", user)}
+          handleDelete={(id) => handleDeleteUser(id)}
         />
       ),
     },
@@ -56,6 +62,13 @@ const HomeView = () => {
       section: <FrequentlyVisitedSection />,
     },
   ];
+
+  const handleDeleteUser = async (id) => {
+    console.log("Delete user called");
+    const response = await deleteUserMutation.mutateAsync(id);
+
+    console.log("Delete user response"), response;
+  };
 
   const handleDialog = (id, openState, modeState, user) => {
     if (id == 1) {
