@@ -157,6 +157,7 @@ const HomeView = () => {
 
       {(userQuery.isLoading ||
         usersQuery.isLoading ||
+        deleteUserMutation.isLoading ||
         newUserMutation.isLoading) && <FullScreenLoaderComponent />}
 
       <SnackbarComponent
