@@ -172,7 +172,7 @@ const ManageUserDialog = ({ open, mode, user, handleClose, handleSubmit }) => {
               fullWidth
               disablePortal
               id="combo-box-demo"
-              options={["", "student", "staff", "admin"]}
+              options={["", "user", "admin"]}
               renderInput={(params) => (
                 <TextField
                   {...params}
