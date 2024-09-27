@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
   Box,
   Divider,
@@ -10,25 +9,27 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Delete from "@mui/icons-material/Delete";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { useUsersLoginsContext } from "../../context/declarations";
 
-const UsersSection = ({ users, viewUser, handleDelete }) => {
+const UsersLogins = () => {
+  const { usersLoginsQuery } = useUsersLoginsContext();
+  const [usersLogins, setUsersLogins] = useState([]);
 
-  const handleDeleteClick = (item) => {
-    if (
-      confirm(`Are you sure you want to delete ${item?.name} ${item.surname}?`)
-    )
-      return handleDelete(item.id);
-  };
+  useEffect(() => {
+    setUsersLogins(usersLoginsQuery?.data?.usersLogins || []);
+    console.log("users logins", usersLogins);
+  }, [usersLoginsQuery]);
 
   return (
     <Grid>
-      {users && users.length > 0 ? (
+      {usersLogins && usersLogins.length > 0 ? (
         <Box sx={{ maxHeight: 500, overflowY: "auto" }}>
           <List dense={true}>
-            {users.map((item) => (
+            {usersLogins.map((item) => (
               <ListItem
                 sx={{ display: "flex", py: 0 }}
                 key={item.id}
@@ -38,31 +39,24 @@ const UsersSection = ({ users, viewUser, handleDelete }) => {
                     spacing={1}
                     divider={<Divider orientation="vertical" flexItem />}
                   >
-                    <IconButton
-                      aria-label="delete"
-                      sx={{ p: 0 }}
-                      onClick={() => handleDeleteClick(item)}
-                    >
-                      <Delete sx={{ width: 15, height: 15, color: "red" }} />
-                    </IconButton>
                   </Stack>
                 }
               >
                 <IconButton
                   aria-label="profile"
                   sx={{ p: 0, mr: 1 }}
-                  onClick={() => viewUser(item)}
+                  // onClick={() => viewUser(item)}
                 >
                   <AccountCircle color="primary" />
                 </IconButton>
 
                 <ListItemText
-                  primary={`${item.name} ${item.surname}`}
+                  primary={`${item.name}`}
                   primaryTypographyProps={{
                     color: "primary",
                     fontWeight: "bold",
                   }}
-                  secondary={item.email}
+                  secondary={`${item.latitude}, ${item.longitude}`}
                   secondaryTypographyProps={{ fontSize: 13, fontWeight: "500" }}
                 />
               </ListItem>
@@ -70,16 +64,14 @@ const UsersSection = ({ users, viewUser, handleDelete }) => {
           </List>
         </Box>
       ) : (
-        <Typography>No Users found</Typography>
+        <Typography>No Interests Places found</Typography>
       )}
     </Grid>
   );
 };
 
-UsersSection.propTypes = {
-  users: PropTypes.array,
-  viewUser: PropTypes.func,
-  handleDelete: PropTypes.func,
+UsersLogins.propTypes = {
+  usersLogins: PropTypes.array,
 };
 
-export default UsersSection;
+export default UsersLogins;

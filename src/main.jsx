@@ -15,4 +15,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   </React.StrictMode>
 );
 
+console.log("API_URl", import.meta.env);
+
 headers();

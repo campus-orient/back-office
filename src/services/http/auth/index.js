@@ -1,5 +1,7 @@
 import axios from "axios";
-import { API_URL, headers } from "../../../constants/axios/config";
+import { headers } from "../../../constants/axios/config";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const verifyToken = async () => {
   try {

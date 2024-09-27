@@ -1,26 +1,32 @@
 import React, { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid";
-import { Card, Container, IconButton, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  IconButton,
+  Link,
+  Typography,
+} from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import InterestsIcon from "@mui/icons-material/Interests";
 import { useUsersContext } from "../../context/declarations";
-import CardHeaderComponent from "./card/header";
-import UsersSection from "./sections/users";
-import InterestsPlacesSection from "./sections/interests-places";
-import FrequentlyVisitedSection from "./sections/frequently-visited";
-import ManageUserDialog from "./sections/users/dialog";
 import FullScreenLoaderComponent from "../../components/loader/full-screen";
 import SnackbarComponent from "../../components/feedback/snackbar";
 import { failedRequest } from "../../utils/helpers/exception/http/failedRequest";
+import LoginIcon from "@mui/icons-material/Login";
+import ShareLocationIcon from "@mui/icons-material/ShareLocation";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const HomeView = () => {
-  const {
-    userQuery,
-    usersQuery,
-    newUserMutation,
-    updateUserMutation,
-    deleteUserMutation,
-  } = useUsersContext();
+  const navigate = useNavigate();
+
+  const { userQuery } = useUsersContext();
+
+  useEffect(() => {
+    console.log("User query response", userQuery.data);
+  }, [userQuery]);
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -28,137 +34,73 @@ const HomeView = () => {
     severity: "",
   });
 
-  const [userDialog, setUserDialog] = useState({
-    open: false,
-    mode: "",
-    user: null,
-  });
-
   const cardList = [
     {
-      id: 1,
       title: "Users",
-      addDialog: true,
-      icon: <GroupsIcon />,
-      section: (
-        <UsersSection
-          users={usersQuery?.data?.users || []}
-          viewUser={(user) => handleDialog(1, true, "update", user)}
-          handleDelete={(id) => handleDeleteUser(id)}
-        />
-      ),
+      icon: <GroupsIcon sx={{ fontSize: 100 }} />,
+      path: "users",
     },
     {
-      id: 2,
-      title: "Points of Interests",
-      icon: <InterestsIcon />,
-      addDialog: false,
-      section: <InterestsPlacesSection />,
-    },
-    {
-      id: 3,
-      title: "Frequently Visited",
-      addDialog: false,
-      section: <FrequentlyVisitedSection />,
+      title: "Interests Places",
+      icon: <InterestsIcon sx={{ fontSize: 100 }} />,
+      path: "interests-places",
     },
   ];
 
-  const handleDeleteUser = async (id) => {
-    console.log("Delete user called");
-    const response = await deleteUserMutation.mutateAsync(id);
-
-    console.log("Delete user response"), response;
-  };
-
-  const handleDialog = (id, openState, modeState, user) => {
-    if (id == 1) {
-      //set user dialog
-      setUserDialog({
-        ...userDialog,
-        open: openState,
-        mode: modeState,
-        user: user,
-      });
-    }
-
-    if (id == 2) {
-      //set interests place dialog
-    }
-    console.log(
-      "Handle dialog called",
-      "id",
-      id,
-      "open",
-      openState,
-      "mode",
-      modeState
-    );
-  };
-
-  useEffect(() => {
-    console.log("Token", localStorage.getItem("token"));
-  }, []);
-
-  useEffect(() => {
-    console.log("State", userDialog);
-  }, [userDialog]);
-
-  useEffect(() => {
-    console.log("User query", userQuery.data, "Users query", usersQuery.data);
-  }, [userQuery, usersQuery]);
-
-  const handleSubmitUser = async (profile) => {
-    console.log("Handle submit user mode", userDialog.mode);
-    const response =
-      userDialog.mode == "create"
-        ? await newUserMutation.mutateAsync(profile)
-        : await updateUserMutation.mutateAsync(profile);
-
-    console.log("Response", response);
-
-    setSnackbar({
-      ...snackbar,
-      open: true,
-      message: response.response
-        ? failedRequest(response).message
-        : response.message,
-      severity: response.response ? "error" : "success",
-    });
-
-    return handleDialog(1, false, userDialog.mode, {});
-  };
-
   return (
     <Container>
-      <Grid container spacing={2} sx={{}}>
-        {cardList.map((item) => (
-          <Grid key={item.title} item xs={12} md={4}>
-            <CardHeaderComponent
-              item={item}
-              toggleDialog={(id, open, mode) =>
-                handleDialog(id, open, mode, {})
-              }
-            />
+      <Typography variant="h4" sx={{ textAlign: "center", mb: 10 }}>
+        Administrator
+      </Typography>
 
-            {item.section}
+      <Grid container justifyContent="center" alignItems="center">
+        {cardList.map((item, index) => (
+          <Grid
+            key={index}
+            item
+            xs={12}
+            md={6}
+            lg={3}
+            sx={{
+              alignItems: "center",
+              justifyContent: "center",
+              px: 1,
+            }}
+          >
+            <Button
+              sx={{
+                display: "flex",
+                width: "100%",
+                ":focus": {
+                  outline: "none",
+                  border: "none",
+                },
+              }}
+              onClick={() => navigate(item.path)}
+            >
+              <Card
+                elevation={5}
+                sx={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  p: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {item?.icon}
+
+                <Typography sx={{ fontWeight: "500", px: 1 }}>
+                  {item?.title}
+                </Typography>
+              </Card>
+            </Button>
           </Grid>
         ))}
       </Grid>
 
-      {userDialog.open && (
-        <ManageUserDialog
-          open={userDialog.open}
-          mode={userDialog.mode}
-          handleClose={(id, open, mode) => handleDialog(id, open, mode, {})}
-          handleSubmit={(profile) => handleSubmitUser(profile)}
-          user={userDialog.user}
-        />
-      )}
-
-      {(userQuery.isLoading ||
-        usersQuery.isLoading ||
-        deleteUserMutation.isLoading ||
-        newUserMutation.isLoading) && <FullScreenLoaderComponent />}
+      {userQuery.isLoading && <FullScreenLoaderComponent />}
 
       <SnackbarComponent
         open={snackbar.open}

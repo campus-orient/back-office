@@ -8,7 +8,14 @@ const CardHeaderComponent = ({ item, toggleDialog }) => {
     <Box>
       <Card
         elevation={5}
-        sx={{ flex: 1, display: "flex", p: 1, justifyContent: "center" }}
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          p: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
         {item?.icon}
         <Typography sx={{ fontWeight: "500", px: 1 }}>{item?.title}</Typography>

@@ -7,215 +7,257 @@ import {
   Stack,
   TextField,
   Typography,
+  Paper,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
-import LockPersonIcon from "@mui/icons-material/LockPerson";
-import validateEmail from "../../../utils/helpers/validate-email";
-import validatePassword from "../../../utils/helpers/validate-password";
-import { login } from "../../../services/http/auth";
-import SnackbarComponent from "../../../components/feedback/snackbar";
-import { failedRequest } from "../../../utils/helpers/exception/http/failedRequest";
-import { headers } from "../../../constants/axios/config";
-import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../../context/declarations";
 
 const LoginView = () => {
-  const { setLogged } = useAuthContext();
-
-  const navigate = useNavigate();
-
-  const [email, setEmail] = useState({
-    value: "",
-    isError: false,
-    message: "",
-  });
-
-  const [password, setPassword] = useState({
-    value: "",
-    isError: false,
-    message: "",
-  });
-
-  const [form, setForm] = useState({
-    submitted: false,
-    isValid: false,
-    isSubmitting: false,
-  });
-
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    severity: "",
-    message: "",
-  });
-
-  const submit = async () => {
-    //
-    setForm({ ...form, submitted: true });
-
-    console.log("Submit form", validateEmail(email.value) ? true : false);
-
-    setEmail({
-      ...email,
-      isError: validateEmail(email.value),
-    });
-
-    setPassword({
-      ...password,
-      isError: validatePassword(password.value),
-    });
-
-    if (!validateEmail(email.value) && !validatePassword(password.value)) {
-      setForm({ ...form, isSubmitting: true });
-
-      const response = await login({
-        email: email.value,
-        password: password.value,
-      });
-
-      setForm({ ...form, isSubmitting: false });
-
-      setPassword({ ...password, value: "" });
-
-      if (!response.token) {
-        return setSnackbar({
-          ...snackbar,
-          open: true,
-          message: failedRequest(response).message,
-          severity: "error",
-        });
-      }
-
-      const token = response.token;
-      localStorage.setItem("token", token);
-
-      headers();
-
-      setLogged(() => true);
-
-      if (localStorage.getItem("token")) {
-        navigate("/");
-      }
-    }
-  };
-
-  useEffect(() => {}, []);
-
-  useEffect(() => {
-    if (!validateEmail(email.value) && !validatePassword(password.value))
-      setForm((f) => ({
-        ...f,
-        isValid: true,
-      }));
-  }, [email, password, form.isSubmitting]);
-
-  useEffect(() => {
-    if (!email.value || !password.value || form.isSubmitting)
-      setForm((f) => ({ ...f, isValid: false }));
-  }, [email.value, password.value, form]);
-
   return (
-    <Container
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        flex: 1,
-        width: "100%",
-        height: "100vh",
-        justifyContent: "center",
-      }}
-    >
-      <Box>
-        <Card sx={{ p: 2, width: 400 }}>
-          <Stack
+    <Container>
+      {/* Header horizontal row */}
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+        }}
+      >
+        <Box sx={{ m: 1, flexGrow: 1 }}>
+          <Paper
+            elevation={10}
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              flexGrow: 1,
+              px: 2,
+              py: 2,
+              borderRadius: 5,
             }}
           >
-            <Typography variant="h5" sx={{ mb: 2 }}>
-              Campus Orient
-            </Typography>
-
-            <Box
-              sx={{ width: "100%", display: "flex", alignItems: "flex-end" }}
-            >
-              <AlternateEmailIcon
-                sx={{ color: "action.active", mr: 1, my: 0.5 }}
-              />
-              <TextField
-                fullWidth
-                type="email"
-                label="email address"
-                variant="standard"
-                error={
-                  form.submitted
-                    ? validateEmail(email.value)
-                      ? true
-                      : false
-                    : false
-                }
-                helperText={form.submitted ? validateEmail(email.value) : null}
-                value={email.value}
-                onChange={(e) => setEmail({ ...email, value: e.target.value })}
-              />
-            </Box>
-
-            <Box
+            <Typography
+              variant="subtitle-1"
               sx={{
-                width: "100%",
                 display: "flex",
-                alignItems: "flex-end",
-                mb: 5,
+                textAlign: "center",
+                alignSelf: "center",
               }}
             >
-              <LockPersonIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
-              <TextField
-                fullWidth
-                type="password"
-                label="password"
-                variant="standard"
-                error={
-                  form.submitted
-                    ? validatePassword(password.value)
-                      ? true
-                      : false
-                    : false
-                }
-                helperText={
-                  form.submitted ? validatePassword(password.value) : null
-                }
-                value={password.value}
-                onChange={(e) =>
-                  setPassword({ ...password, value: e.target.value })
-                }
-              />
-            </Box>
+              250
+            </Typography>
 
-            <Button
-              variant="outlined"
-              color="success"
-              onClick={submit}
-              disabled={!form.isValid}
+            <Typography variant="h6" sx={{ flexGrow: 1, p: 5 }}>
+              250
+            </Typography>
+          </Paper>
+        </Box>
+
+        <Box sx={{ m: 1, flexGrow: 1 }}>
+          <Paper
+            elevation={10}
+            sx={{
+              flexGrow: 1,
+              px: 2,
+              py: 2,
+              borderRadius: 5,
+            }}
+          >
+            <Typography
+              variant="subtitle-1"
+              sx={{
+                display: "flex",
+                textAlign: "center",
+                alignSelf: "center",
+              }}
             >
-              {form.isSubmitting ? "Processing..." : "Submit"}
-            </Button>
-          </Stack>
-        </Card>
+              250
+            </Typography>
+
+            <Typography variant="h6" sx={{ flexGrow: 1, p: 5 }}>
+              250
+            </Typography>
+          </Paper>
+        </Box>
+
+        <Box sx={{ m: 1, flexGrow: 1 }}>
+          <Paper
+            elevation={10}
+            sx={{
+              flexGrow: 1,
+              px: 2,
+              py: 2,
+              borderRadius: 5,
+            }}
+          >
+            <Typography
+              variant="subtitle-1"
+              sx={{
+                display: "flex",
+                textAlign: "center",
+                alignSelf: "center",
+              }}
+            >
+              250
+            </Typography>
+
+            <Typography variant="h6" sx={{ flexGrow: 1, p: 5 }}>
+              250
+            </Typography>
+          </Paper>
+        </Box>
+
+        <Box sx={{ m: 1, flexGrow: 1 }}>
+          <Paper
+            elevation={10}
+            sx={{
+              flexGrow: 1,
+              px: 2,
+              py: 2,
+              borderRadius: 5,
+            }}
+          >
+            <Typography
+              variant="subtitle-1"
+              sx={{
+                display: "flex",
+                textAlign: "center",
+                alignSelf: "center",
+              }}
+            >
+              250
+            </Typography>
+
+            <Typography variant="h6" sx={{ flexGrow: 1, p: 5 }}>
+              250
+            </Typography>
+          </Paper>
+        </Box>
+
+        <Box sx={{ m: 1, flexGrow: 1 }}>
+          <Paper
+            elevation={10}
+            sx={{
+              flexGrow: 1,
+              px: 2,
+              py: 2,
+              borderRadius: 5,
+            }}
+          >
+            <Typography
+              variant="subtitle-1"
+              sx={{
+                display: "flex",
+                textAlign: "center",
+                alignSelf: "center",
+              }}
+            >
+              250
+            </Typography>
+
+            <Typography variant="h6" sx={{ flexGrow: 1, p: 5 }}>
+              250
+            </Typography>
+          </Paper>
+        </Box>
       </Box>
 
-      <SnackbarComponent
-        open={snackbar.open}
-        message={snackbar.message}
-        severity={snackbar.severity}
-        handleVisibility={(state) => {
-          setSnackbar({
-            ...snackbar,
-            open: state,
-          });
+      {/* Body horizontal row */}
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          alignItems: "stretch",
         }}
-      />
+      >
+        <Box
+          sx={{
+            m: 1,
+            flexGrow: 3,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Paper
+            elevation={10}
+            sx={{
+              flexGrow: 1,
+              px: 2,
+              py: 2,
+              borderRadius: 5,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Typography
+              variant="subtitle-1"
+              sx={{
+                display: "flex",
+                textAlign: "center",
+                alignSelf: "center",
+              }}
+            >
+              250
+            </Typography>
+
+            <Typography variant="h6" sx={{ flexGrow: 1, p: 5 }}>
+              250
+            </Typography>
+          </Paper>
+        </Box>
+
+        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+          <Box sx={{ m: 1, flexGrow: 1 }}>
+            <Paper
+              elevation={10}
+              sx={{
+                flexGrow: 1,
+                px: 2,
+                py: 2,
+                borderRadius: 5,
+              }}
+            >
+              <Typography
+                variant="subtitle-1"
+                sx={{
+                  display: "flex",
+                  textAlign: "center",
+                  alignSelf: "center",
+                }}
+              >
+                250
+              </Typography>
+
+              <Typography variant="h6" sx={{ flexGrow: 1, p: 5 }}>
+                250
+              </Typography>
+            </Paper>
+          </Box>
+
+          <Box sx={{ m: 1, flexGrow: 1 }}>
+            <Paper
+              elevation={10}
+              sx={{
+                flexGrow: 1,
+                px: 2,
+                py: 2,
+                borderRadius: 5,
+              }}
+            >
+              <Typography
+                variant="subtitle-1"
+                sx={{
+                  display: "flex",
+                  textAlign: "center",
+                  alignSelf: "center",
+                }}
+              >
+                250
+              </Typography>
+
+              <Typography variant="h6" sx={{ flexGrow: 1, p: 5 }}>
+                250
+              </Typography>
+            </Paper>
+          </Box>
+        </Box>
+      </Box>
     </Container>
   );
 };
